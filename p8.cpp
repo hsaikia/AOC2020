@@ -6,11 +6,12 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <fstream>
 
 struct Instruction{
   std::string code;
   int value;
-  std::size_t runs{0};
+  bool has_run{false};
   // dirty flag
   bool dirty{false};
 
@@ -27,26 +28,26 @@ void reset_runs()
 {
   for(auto& ins : program)
   {
-    ins.runs = 0;
+    ins.has_run = false;
   }
 }
 
 int runAcc(int loc, int& acc_res)
 {
   acc_res += program[loc].value;
-  program[loc].runs++;
+  program[loc].has_run = true;
   return loc + 1;
 }
 
 int runJmp(int loc)
 {
-  program[loc].runs++;
+  program[loc].has_run = true;
   return loc + program[loc].value;
 }
 
 int runNop(int loc)
 {
-  program[loc].runs++;
+  program[loc].has_run = true;
   return loc + 1;
 }
 
@@ -54,39 +55,35 @@ bool run()
 {
   int ret = 0;
   int loc = 0;
-  bool success = true;
+  bool success = false;
 
-  // allow looping only twice
-  while(program[loc].runs < 2)
+  // do not allow looping
+  while(!program[loc].has_run)
   {
-    if(program[loc].runs >= 1 || loc < 0)
-    {
-      // looping or invalid access
-      success = false;
-      break;
-    }
-
-    if (loc > program.size() - 1)
-    {
-      //success
-      break;
-    }
-
     if(program[loc].code == "acc")
     {
       loc = runAcc(loc, ret);
-      continue;
+    
     }
-
-    if(program[loc].code == "nop")
+    else if(program[loc].code == "nop")
     {
       loc = program[loc].dirty ? runJmp(loc) : runNop(loc);
-      continue;
     }
-
-    if(program[loc].code == "jmp")
+    else if(program[loc].code == "jmp")
     {
       loc = program[loc].dirty ? runNop(loc) : runJmp(loc);
+    }
+
+    if(loc < 0)
+    {
+      // invalid access
+      break;
+    }
+    if (loc > program.size() - 1)
+    {
+      //success
+      success = true;
+      break;
     }
   }
 
@@ -129,8 +126,13 @@ void part2()
 }
 
 int main() {
+
+  std::ifstream file;
+  //file.open("sample_input.txt");
+  file.open("input.txt");
+
   std::string line;
-  while(std::getline(std::cin, line))
+  while(std::getline(file, line))
   {
     auto iss = std::istringstream{line};
     std::vector<std::string> tokens;
@@ -142,6 +144,8 @@ int main() {
 
     program.emplace_back(Instruction(tokens[0], std::stoi(tokens[1])));
   }
+
+  file.close();
 
   //part1();
   part2();
