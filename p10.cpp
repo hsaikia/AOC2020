@@ -13,7 +13,7 @@
 
 #define I int64_t
 #define UI std::size_t
-#define FOR(a, b) for(UI i = (a); i < (b); i++)
+#define FOR(i, b) for(UI i = 0; i < (b); i++)
 
 std::vector<I> adapters;
 
