@@ -13,7 +13,7 @@
 
 #define I int64_t
 #define UI std::size_t
-#define FOR(i, b) for(UI i = 0; i < (b); i++)
+#define FOR(i, a, b) for(UI i = (a); i < (b); i++)
 
 std::vector<I> adapters;
 
@@ -37,7 +37,7 @@ I count(UI idx)
   }
 
   I ret = 0;
-  FOR(i, adapters.size())
+  FOR(i, idx, adapters.size())
   {
     if (std::abs(adapters[idx - 1] - adapters[i]) <= 3)
     {
@@ -71,7 +71,7 @@ int main() {
 
   int diff_count[3] = {0, 0, 0};
 
-  FOR(i, adapters.size() - 1)
+  FOR(i, 0, adapters.size() - 1)
   {
     auto diff = std::abs(adapters[i] - adapters[i + 1]);
     diff_count[diff - 1]++;
