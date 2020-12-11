@@ -37,7 +37,7 @@ I count(UI idx)
   }
 
   I ret = 0;
-  FOR(idx, adapters.size())
+  FOR(i, adapters.size())
   {
     if (std::abs(adapters[idx - 1] - adapters[i]) <= 3)
     {
@@ -71,7 +71,7 @@ int main() {
 
   int diff_count[3] = {0, 0, 0};
 
-  FOR(0, adapters.size() - 1)
+  FOR(i, adapters.size() - 1)
   {
     auto diff = std::abs(adapters[i] - adapters[i + 1]);
     diff_count[diff - 1]++;
